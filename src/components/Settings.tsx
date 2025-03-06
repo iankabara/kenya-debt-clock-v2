@@ -1,13 +1,13 @@
 // src/components/Settings.tsx
 import React from "react";
 import {
-  Card,
-  CardContent,
+  Box,
   Typography,
   Slider,
   Switch,
   FormControlLabel,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface SettingsProps {
   growthRate: number;
@@ -21,33 +21,35 @@ const Settings: React.FC<SettingsProps> = ({
   setGrowthRate,
   useActualData,
   setUseActualData,
-}) => (
-  <Card sx={{ maxWidth: 400, mx: "auto", mt: 4 }}>
-    <CardContent>
-      <Typography variant="h6" gutterBottom>
-        Debt Growth Rate: {growthRate.toFixed(2)}% per year
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Box sx={{ maxWidth: 600, mx: "auto", mt: 4, p: 2 }}>
+      <Typography variant="h5" color="primary" gutterBottom>
+        {t("settings")}
       </Typography>
+      <Typography gutterBottom>{t("growthRate")}</Typography>
       <Slider
         value={growthRate}
-        onChange={(_, value) => setGrowthRate(value as number)}
+        onChange={(_, newValue) => setGrowthRate(newValue as number)}
         min={0}
-        max={20}
+        max={50}
         step={0.1}
-        color="primary"
         valueLabelDisplay="auto"
+        sx={{ mb: 2 }}
       />
       <FormControlLabel
         control={
           <Switch
             checked={useActualData}
             onChange={(e) => setUseActualData(e.target.checked)}
-            color="primary"
           />
         }
-        label="Use Actual Data (if available)"
+        label={t("useActualData")}
       />
-    </CardContent>
-  </Card>
-);
+    </Box>
+  );
+};
 
 export default Settings;

@@ -16,11 +16,12 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useTranslation } from "react-i18next";
+import { DebtData } from "../types";
 
 interface NavbarProps {
   darkMode: boolean;
   toggleDarkMode: () => void;
-  debtData: DebtData[]; // For notifications
+  debtData: DebtData[];
 }
 
 const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode, debtData }) => {

@@ -1,7 +1,6 @@
 // src/App.tsx
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import { TransitionGroup, CSSTransition } from "react-transition-group";
 import axios from "axios";
 import {
   Container,
@@ -11,16 +10,28 @@ import {
   CircularProgress,
   Grid,
 } from "@mui/material";
+import { AnimatePresence, motion } from "framer-motion";
 import Navbar from "./components/Navbar";
 import DebtClock from "./components/DebtClock";
 import DebtProgression from "./components/DebtProgression";
 import Settings from "./components/Settings";
 import { DebtData } from "./types";
 import staticDebtData from "./data/staticDebtData.json";
-import "./transitions.css";
 
 const API_KEY_EXCHANGE = "YOUR_EXCHANGE_RATE_API_KEY";
 const POPULATION_2025 = 54_000_000;
+
+const pageVariants = {
+  initial: { opacity: 0, y: 20 },
+  in: { opacity: 1, y: 0 },
+  out: { opacity: 0, y: -20 },
+};
+
+const pageTransition = {
+  type: "tween",
+  ease: "anticipate",
+  duration: 0.3,
+};
 
 const App: React.FC = () => {
   const [debtData, setDebtData] = useState<DebtData[]>(staticDebtData);
@@ -29,7 +40,6 @@ const App: React.FC = () => {
   const [useActualData, setUseActualData] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
     const fetchExchangeRate = async () => {
@@ -56,7 +66,6 @@ const App: React.FC = () => {
           const response = await axios.get(
             "https://api.worldbank.org/v2/country/KE/indicator/DT.DOD.DECT.CD?format=json"
           );
-          // Placeholder: Map actual data
           setDebtData(generateDebtProgression(staticDebtData));
         } catch (error) {
           console.error("Failed to fetch actual debt data", error);
@@ -94,19 +103,68 @@ const App: React.FC = () => {
   };
 
   return (
+    <Router>
+      <AppContent
+        debtData={debtData}
+        exchangeRate={exchangeRate}
+        growthRate={growthRate}
+        setGrowthRate={setGrowthRate}
+        useActualData={useActualData}
+        setUseActualData={setUseActualData}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        loading={loading}
+      />
+    </Router>
+  );
+};
+
+interface AppContentProps {
+  debtData: DebtData[];
+  exchangeRate: number;
+  growthRate: number;
+  setGrowthRate: (rate: number) => void;
+  useActualData: boolean;
+  setUseActualData: (value: boolean) => void;
+  darkMode: boolean;
+  setDarkMode: (value: boolean) => void;
+  loading: boolean;
+}
+
+const AppContent: React.FC<AppContentProps> = ({
+  debtData = [],
+  exchangeRate = 130,
+  growthRate = 14.87,
+  setGrowthRate = () => {},
+  useActualData = false,
+  setUseActualData = () => {},
+  darkMode = false,
+  setDarkMode = () => {},
+  loading = false,
+}) => {
+  const location = useLocation();
+
+  return (
     <>
-      <Navbar darkMode={darkMode} toggleDarkMode={() => setDarkMode(!darkMode)} debtData={debtData} />
+      <Navbar
+        darkMode={darkMode}
+        toggleDarkMode={() => setDarkMode(!darkMode)}
+        debtData={debtData}
+      />
       <Container sx={{ py: 4 }}>
         {loading && (
           <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
             <CircularProgress />
           </Box>
         )}
-        <TransitionGroup>
-          <CSSTransition
+        <AnimatePresence mode="wait">
+          <motion.div
             key={location.pathname}
-            classNames="fade"
-            timeout={300}
+            variants={pageVariants}
+            initial="initial"
+            animate="in"
+            exit="out"
+            transition={pageTransition}
           >
             <Routes location={location}>
               <Route
@@ -153,8 +211,8 @@ const App: React.FC = () => {
                 }
               />
             </Routes>
-          </CSSTransition>
-        </TransitionGroup>
+          </motion.div>
+        </AnimatePresence>
       </Container>
     </>
   );

@@ -49,7 +49,7 @@ const DebtProgression: React.FC<DebtProgressionProps> = ({ debtData, growthRate 
       currentDebt = currentDebt * (1 + growthRate / 100) - (withRepayment ? repaymentAmount : 0);
       futureData.push({
         year,
-        totalDebt: Math.max(currentDebt, 0), // No negative debt
+        totalDebt: Math.max(currentDebt, 0),
         externalDebt: currentDebt / 2,
         internalDebt: currentDebt / 2,
         budgetDeficit: 0,

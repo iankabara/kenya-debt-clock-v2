@@ -32,18 +32,17 @@ const milestones = [
   { threshold: 10000, label: "10 Trillion KES" },
 ];
 
-// Placeholder GDP data (B KES)
 const gdpData = { 2000: 1300, 2025: 7500 };
 
 const DebtClock: React.FC<DebtClockProps> = ({ debtData, exchangeRate }) => {
   const { t } = useTranslation();
   const currentDebtData = debtData.find((d) => d.year === 2025);
-  const initialDebt = (currentDebtData?.totalDebt || 11000) * 1_000_000_000; // KES
+  const initialDebt = (currentDebtData?.totalDebt || 11000) * 1_000_000_000;
   const [liveDebt, setLiveDebt] = useState(initialDebt);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLiveDebt((prev) => prev + 100000); // 100K KES/second
+      setLiveDebt((prev) => prev + 100000);
     }, 1000);
     return () => clearInterval(interval);
   }, []);

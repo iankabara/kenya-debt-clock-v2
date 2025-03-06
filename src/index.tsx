@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
-import "./i18n"; // Import i18n setup
+import "./i18n";
 
 const lightTheme = createTheme({
   palette: {
@@ -23,6 +23,7 @@ const darkTheme = createTheme({
 
 const Root: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
+
 
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
