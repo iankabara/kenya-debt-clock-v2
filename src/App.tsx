@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react"; // Added useCallback
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import axios from "axios";
 import {
@@ -58,15 +58,59 @@ const App: React.FC = () => {
     fetchExchangeRate();
   }, []);
 
+  const generateDebtProgression = useCallback(
+    (baseData: DebtData[]): DebtData[] => {
+      const startYear = 2000;
+      const endYear = 2025;
+      const progression: DebtData[] = [];
+      let currentDebt = 346.88;
+
+      for (let year = startYear; year <= endYear; year++) {
+        const debtEntry = baseData.find((d) => d.year === year) || {
+          year,
+          totalDebt: currentDebt,
+          externalDebt: currentDebt / 2,
+          internalDebt: currentDebt / 2,
+          budgetDeficit: year === 2000 ? 7.57 : year === 2025 ? -831 : 0,
+        };
+        if (year === 2025) {
+          debtEntry.debtPerCitizen = (debtEntry.totalDebt * 1_000_000_000) / POPULATION_2025;
+        }
+        progression.push(debtEntry);
+        currentDebt *= 1 + growthRate / 100;
+      }
+      return progression;
+    },
+    [growthRate] // Dependency for useCallback
+  );
+
   useEffect(() => {
     const fetchDebtData = async () => {
       setLoading(true);
       if (useActualData) {
         try {
           const response = await axios.get(
-            "https://api.worldbank.org/v2/country/KE/indicator/DT.DOD.DECT.CD?format=json"
+            "https://api.worldbank.org/v2/country/KE/indicator/DT.DOD.DECT.CD?format=json&per_page=50"
           );
-          setDebtData(generateDebtProgression(staticDebtData));
+          const apiData = response.data[1];
+          const actualDebtData: DebtData[] = apiData.map((entry: any) => ({
+            year: parseInt(entry.date, 10),
+            totalDebt: entry.value ? entry.value / 1_000_000_000 : 0,
+            externalDebt: entry.value ? entry.value / 1_000_000_000 : 0,
+            internalDebt: 0,
+            budgetDeficit: 0,
+            debtPerCitizen: entry.date === "2025" && entry.value
+              ? entry.value / POPULATION_2025
+              : undefined,
+          }));
+          const convertedDebtData = actualDebtData.map((data) => ({
+            ...data,
+            totalDebt: data.totalDebt * exchangeRate,
+            externalDebt: data.externalDebt * exchangeRate,
+            internalDebt: data.internalDebt * exchangeRate,
+            debtPerCitizen: data.debtPerCitizen ? data.debtPerCitizen * exchangeRate : undefined,
+          }));
+          setDebtData(convertedDebtData);
         } catch (error) {
           console.error("Failed to fetch actual debt data", error);
           setDebtData(generateDebtProgression(staticDebtData));
@@ -77,30 +121,7 @@ const App: React.FC = () => {
       setLoading(false);
     };
     fetchDebtData();
-  }, [growthRate, useActualData]);
-
-  const generateDebtProgression = (baseData: DebtData[]): DebtData[] => {
-    const startYear = 2000;
-    const endYear = 2025;
-    const progression: DebtData[] = [];
-    let currentDebt = 346.88;
-
-    for (let year = startYear; year <= endYear; year++) {
-      const debtEntry = baseData.find((d) => d.year === year) || {
-        year,
-        totalDebt: currentDebt,
-        externalDebt: currentDebt / 2,
-        internalDebt: currentDebt / 2,
-        budgetDeficit: year === 2000 ? 7.57 : year === 2025 ? -831 : 0,
-      };
-      if (year === 2025) {
-        debtEntry.debtPerCitizen = (debtEntry.totalDebt * 1_000_000_000) / POPULATION_2025;
-      }
-      progression.push(debtEntry);
-      currentDebt *= 1 + growthRate / 100;
-    }
-    return progression;
-  };
+  }, [growthRate, useActualData, exchangeRate, generateDebtProgression]); // Added generateDebtProgression
 
   return (
     <Router>

@@ -22,7 +22,7 @@ const darkTheme = createTheme({
 });
 
 const Root: React.FC = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode,] = useState(false);
 
 
   return (
