@@ -1,0 +1,16 @@
+[
+    {
+      "year": 2000,
+      "totalDebt": 346.88,
+      "externalDebt": 173.44,
+      "internalDebt": 173.44,
+      "budgetDeficit": 7.57
+    },
+    {
+      "year": 2025,
+      "totalDebt": 11000,
+      "externalDebt": 5500,
+      "internalDebt": 5500,
+      "budgetDeficit": -831
+    }
+  ]
