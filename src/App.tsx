@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Add this line
 import Navbar from "./components/Navbar";
 import DebtClock from "./components/DebtClock";
 import DebtProgression from "./components/DebtProgression";

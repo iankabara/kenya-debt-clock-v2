@@ -1,26 +1,24 @@
 // src/index.tsx
-import React, { useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import "react-toastify/dist/ReactToastify.css"; // Add this line
 import "./i18n";
 
 const lightTheme = createTheme({
   palette: { mode: "light", primary: { main: "#006400" }, secondary: { main: "#FF0000" } },
-  // ... rest of theme
 });
 
 const darkTheme = createTheme({
   palette: { mode: "dark", primary: { main: "#32CD32" }, secondary: { main: "#FF4500" } },
-  // ... rest of theme
 });
 
 const Root: React.FC = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = React.useState(false);
 
- 
 
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
