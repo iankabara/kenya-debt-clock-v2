@@ -1,11 +1,11 @@
 // src/components/Settings.tsx
 import React from "react";
 import {
-  Box,
   Typography,
   Slider,
   Switch,
   FormControlLabel,
+  Paper,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -25,8 +25,8 @@ const Settings: React.FC<SettingsProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", mt: 4, p: 2 }}>
-      <Typography variant="h5" color="primary" gutterBottom>
+    <Paper sx={{ maxWidth: 600, mx: "auto", mt: 4, p: 3, bgcolor: "background.paper" }}>
+      <Typography variant="h5" color="primary" gutterBottom sx={{ fontWeight: 600 }}>
         {t("settings")}
       </Typography>
       <Typography gutterBottom>{t("growthRate")}</Typography>
@@ -37,7 +37,7 @@ const Settings: React.FC<SettingsProps> = ({
         max={50}
         step={0.1}
         valueLabelDisplay="auto"
-        sx={{ mb: 2 }}
+        sx={{ mb: 3 }}
       />
       <FormControlLabel
         control={
@@ -48,7 +48,7 @@ const Settings: React.FC<SettingsProps> = ({
         }
         label={t("useActualData")}
       />
-    </Box>
+    </Paper>
   );
 };
 

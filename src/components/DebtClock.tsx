@@ -7,6 +7,7 @@ import {
   Tooltip,
   TextField,
   InputAdornment,
+  Box,
 } from "@mui/material";
 import {
   Timeline,
@@ -55,10 +56,10 @@ const DebtClock: React.FC<DebtClockProps> = ({ debtData, exchangeRate }) => {
   const debtToGDP = (((liveDebt / 1_000_000_000) / gdpData[2025]) * 100).toFixed(1);
 
   return (
-    <Card sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
+    <Card sx={{ maxWidth: 600, mx: "auto", mt: 4, bgcolor: "background.paper" }}>
       <CardContent>
         <Tooltip title="Debt increases in real-time (simulated)">
-          <Typography variant="h5" color="secondary" gutterBottom>
+          <Typography variant="h5" color="secondary" gutterBottom sx={{ fontWeight: 600 }}>
             {t("totalDebt")}:{" "}
             <motion.span
               initial={{ opacity: 0 }}
@@ -69,7 +70,7 @@ const DebtClock: React.FC<DebtClockProps> = ({ debtData, exchangeRate }) => {
             </motion.span>
           </Typography>
         </Tooltip>
-        <Typography variant="h6" color="text.secondary">
+        <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
           {t("debtPerCitizen")}: ~{Math.round(liveDebt / 54_000_000).toLocaleString()} KES
         </Typography>
         <TextField
@@ -79,32 +80,33 @@ const DebtClock: React.FC<DebtClockProps> = ({ debtData, exchangeRate }) => {
             endAdornment: <InputAdornment position="end">B USD</InputAdornment>,
             readOnly: true,
           }}
-          sx={{ mt: 2, width: "100%" }}
+          fullWidth
+          sx={{ mb: 2 }}
+          variant="outlined"
         />
-        <Typography variant="subtitle1" sx={{ mt: 2 }}>
+        <Typography variant="subtitle1" sx={{ mb: 2 }}>
           {t("debtToGDP")}: {debtToGDP}%
         </Typography>
-        <PieChart
-          series={[{ data: pieData, innerRadius: 30, outerRadius: 100 }]}
-          height={200}
-          sx={{ mt: 2 }}
-        />
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+          <PieChart
+            series={[{ data: pieData, innerRadius: 40, outerRadius: 100 }]}
+            height={200}
+            width={300}
+          />
+        </Box>
         <Timeline sx={{ mt: 2 }}>
           {milestones.map((milestone) => (
             <TimelineItem key={milestone.threshold}>
               <TimelineSeparator>
                 <TimelineDot
                   color={
-                    (liveDebt / 1_000_000_000) >= milestone.threshold
-                      ? "secondary"
-                      : "grey"
+                    (liveDebt / 1_000_000_000) >= milestone.threshold ? "secondary" : "grey"
                   }
                 />
                 <TimelineConnector />
               </TimelineSeparator>
               <TimelineContent>
-                {milestone.label} (
-                {(milestone.threshold / exchangeRate).toFixed(2)}B USD)
+                {milestone.label} ({(milestone.threshold / exchangeRate).toFixed(2)}B USD)
               </TimelineContent>
             </TimelineItem>
           ))}
