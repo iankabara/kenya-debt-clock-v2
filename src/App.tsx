@@ -72,9 +72,6 @@ const App: React.FC<AppProps> = ({ darkMode, setDarkMode }) => {
       setLoading(true);
       if (useActualData) {
         try {
-          const response = await axios.get(
-            "https://api.worldbank.org/v2/country/KE/indicator/DT.DOD.DECT.CD?format=json"
-          );
           // TODO: Parse World Bank API response properly; using static data as placeholder
           setDebtData(generateDebtProgression(staticDebtData));
           toast.success("Debt data fetched successfully!");
@@ -90,6 +87,7 @@ const App: React.FC<AppProps> = ({ darkMode, setDarkMode }) => {
       setLoading(false);
     };
     fetchDebtData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [growthRate, useActualData]);
 
   const generateDebtProgression = (baseData: DebtData[]): DebtData[] => {
